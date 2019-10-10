@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 public class ThreadFigura extends Thread {
     private ArrayList<Figura> figuras;
     private Tablero tablero;
+   
     
     private boolean running;
     private boolean paused = false;
@@ -34,15 +35,15 @@ public class ThreadFigura extends Thread {
     @Override
     public void run() {
     while(running){
-        for (int i = -3; i < tablero.FILAS_Y; i++) {
-           int columnaActual = tablero.getIndex_x();
-                mostrarPieza(columnaActual,i);
+        for (int Y = -3; Y < tablero.FILAS_Y; Y++) {
+           int X_Actual = tablero.getIndex_x();
+                mostrarPieza(X_Actual,Y);
             try {
-                sleep(600);
+                sleep(100);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
             }
-                borrarPieza(columnaActual, i);
+            borrarPieza(X_Actual,Y);
         }
     }
 }
@@ -76,27 +77,22 @@ public class ThreadFigura extends Thread {
         return new FiguraL();
     }
     
-    public void mostrarPieza(int columnaActual,int filaActual){
+    public void mostrarPieza(int X_Actual,int Y_Actual){
         Figura pieza = tablero.nextPieza();
         setPiezas();
-        pieza.setCoordenadas(columnaActual,filaActual);
-        tablero.figuraActual  = pieza;
+        pieza.setCoordenadas(X_Actual,Y_Actual);
+        this.tablero.piezaActual = pieza;
         for(int i = 0;i<4;i++){
-            //System.out.println(pieza.maxY);
-            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY)
+            if(Y_Actual>0 && X_Actual <Tablero.FILAS_Y - tablero.piezaActual.maxY)
             tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(pieza.color);
         }
     }
-    public void borrarPieza(int columnaActual,int filaActual){
-        Figura pieza = tablero.figuraActual;
+public void borrarPieza(int X_Actual,int Y_Actual){
+        Figura pieza = tablero.piezaActual;
         pieza.getCoordenadas();
         for(int i = 0;i<4;i++){
-            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-tablero.figuraActual.maxY)
+            if(Y_Actual>0 &&  Y_Actual<Tablero.FILAS_Y - tablero.piezaActual.maxY);
                 tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(Color.DARK_GRAY);
         }
         }
-    }
-    
-    
-    
-
+}

@@ -19,7 +19,9 @@ public abstract class Figura {
     Point ejeDeRotacion = new Point();
     int coordenadas [][];
     int valores [][][];
-    int maxY,maxX,minX;
+    int maxX = 0;
+    int maxY;
+    int minX;
     
     Figura(){
         coordenadas = new int[4][2];
@@ -32,6 +34,7 @@ public abstract class Figura {
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { 1, 1 } }, // L
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { -1, 1 } } // L al revés
         };
+        
     }
     
     abstract void rotar();
@@ -49,12 +52,12 @@ public abstract class Figura {
             }
         }
     }
-    
-    int[][] getCoordenadas(){
+        public int[][] getCoordenadas() {
         return coordenadas;
+        
+        
     }
-    
-    void setMaxY(){
+void setMaxY(){
         int mayor = coordenadas[0][1];
         for(int i = 1;i<4;i++){
             mayor = Math.max(mayor, coordenadas[i][1]);
@@ -88,20 +91,18 @@ class FiguraL extends Figura{
 
     public FiguraL() {
         nuevaFigura();
+        setMaxY();
     }
     
     @Override
     void nuevaFigura(){
         this.color = Color.ORANGE;
-        this.coordenadas = valores[6];  
-        setMaxX();
-        setMaxY();
-        setMinY();
+        this.coordenadas = valores[0];    
     }
     
     @Override
     void detenerCaida(){
-
+        int s = 0;
 }
     @Override
     void rotar(){
@@ -114,5 +115,7 @@ class FiguraL extends Figura{
         this.ejeDeRotacion.y = y;
         this.setCoordenadas(x, y);
 }
+
+
     
 }
