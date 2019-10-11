@@ -5,6 +5,8 @@
  */
 package tetris;
 
+import java.awt.Color;
+
 
 public class Tablero extends javax.swing.JFrame {
 
@@ -17,11 +19,10 @@ public class Tablero extends javax.swing.JFrame {
     private int index_x;
     private final int index_y;
     Figura piezas[];
-    public Figura piezaActual;
-    
     // Tablero con objetos JButton
     MyJLabel[][] tableroLabels = new MyJLabel[COLUMNAS_X][FILAS_Y];
     ThreadFigura threadFigura;
+    Figura figuraActual;
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
@@ -56,12 +57,12 @@ public class Tablero extends javax.swing.JFrame {
         return this.index_x;
     }    
     public int decrementIndex_x(){
-        if (index_x > 0)
+        if (index_x > 0+Math.abs(figuraActual.minX))
             --index_x;
         return index_x;
     }
     public int incrementIndex_x(){
-        if (index_x < (COLUMNAS_X-1))
+        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX))
             ++index_x;
         return index_x;
     }
@@ -72,6 +73,18 @@ public class Tablero extends javax.swing.JFrame {
         piezas[1] = piezas[2];
         piezas[2] = null;
         return temp;
+    }
+    
+    public void checkTablero(){
+        for (int i = COLUMNAS_X-1; i > -1; i--) {
+            for (int j = FILAS_Y-1; j > -1; j--) {
+                if (tableroLabels[i][j].label.getBackground()!= Color.DARK_GRAY) 
+                    tableroLabels[i][j].setEmpty(false); 
+                else
+                    tableroLabels[i][j].setEmpty(true); 
+            }
+        }
+        index_x = COLUMNAS_X/2;
     }
     
 
@@ -221,7 +234,7 @@ public class Tablero extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
+        //</editor-fold>max
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
