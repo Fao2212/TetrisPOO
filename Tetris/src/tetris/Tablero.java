@@ -17,11 +17,10 @@ public class Tablero extends javax.swing.JFrame {
     private int index_x;
     private final int index_y;
     Figura piezas[];
-    public Figura piezaActual;
-    
     // Tablero con objetos JButton
     MyJLabel[][] tableroLabels = new MyJLabel[COLUMNAS_X][FILAS_Y];
     ThreadFigura threadFigura;
+    Figura figuraActual;
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
@@ -56,12 +55,12 @@ public class Tablero extends javax.swing.JFrame {
         return this.index_x;
     }    
     public int decrementIndex_x(){
-        if (index_x > 0)
+        if (index_x > 0+Math.abs(figuraActual.minX))
             --index_x;
         return index_x;
     }
     public int incrementIndex_x(){
-        if (index_x < (COLUMNAS_X-1))
+        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX))
             ++index_x;
         return index_x;
     }
@@ -221,7 +220,7 @@ public class Tablero extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
+        //</editor-fold>max
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

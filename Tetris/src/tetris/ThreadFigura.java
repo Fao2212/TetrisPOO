@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 public class ThreadFigura extends Thread {
     private ArrayList<Figura> figuras;
     private Tablero tablero;
-   
     
     private boolean running;
     private boolean paused = false;
@@ -35,16 +34,24 @@ public class ThreadFigura extends Thread {
     @Override
     public void run() {
     while(running){
-        for (int Y = -3; Y < tablero.FILAS_Y; Y++) {
-           int X_Actual = tablero.getIndex_x();
-                mostrarPieza(X_Actual,Y);
+        for (int i = -3; i <= tablero.FILAS_Y; i++) {
+            if(i == tablero.FILAS_Y-1){
+                tocarFondo();
+            }
+           int columnaActual = tablero.getIndex_x();
+                mostrarPieza(columnaActual,i);
             try {
                 sleep(100);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
             }
-            borrarPieza(X_Actual,Y);
+                borrarPieza(columnaActual, i);
         }
+        //Se me ocurre un par de for que revise si algo esta pintado de color le haga un set de empty o de false.
+        System.out.println(tablero.tableroLabels[4][18].isEmpty());
+        System.out.println(tablero.tableroLabels[5][18].isEmpty());
+        System.out.println(tablero.tableroLabels[4][19].isEmpty());
+        System.out.println(tablero.tableroLabels[5][19].isEmpty());
     }
 }
     
@@ -77,22 +84,51 @@ public class ThreadFigura extends Thread {
         return new FiguraL();
     }
     
-    public void mostrarPieza(int X_Actual,int Y_Actual){
+    public void mostrarPieza(int columnaActual,int filaActual){
         Figura pieza = tablero.nextPieza();
         setPiezas();
-        pieza.setCoordenadas(X_Actual,Y_Actual);
-        this.tablero.piezaActual = pieza;
+        pieza.setCoordenadas(columnaActual,filaActual);
+        tablero.figuraActual  = pieza;
         for(int i = 0;i<4;i++){
-            if(Y_Actual>0 && X_Actual <Tablero.FILAS_Y - tablero.piezaActual.maxY)
-            tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(pieza.color);
+            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY ){
+                    tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(pieza.color);
+
+        }
         }
     }
-public void borrarPieza(int X_Actual,int Y_Actual){
-        Figura pieza = tablero.piezaActual;
+    public void borrarPieza(int columnaActual,int filaActual){
+        Figura pieza = tablero.figuraActual;
         pieza.getCoordenadas();
         for(int i = 0;i<4;i++){
-            if(Y_Actual>0 &&  Y_Actual<Tablero.FILAS_Y - tablero.piezaActual.maxY);
+            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-tablero.figuraActual.maxY)
                 tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(Color.DARK_GRAY);
         }
         }
+    
+        void tocarFondo(){
+            Figura pieza = tablero.figuraActual;
+            pieza.getCoordenadas();
+            for(int i = 0;i<4;i++){
+                tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].setEmpty(false);
+                System.out.println("X: " +String.valueOf(pieza.coordenadas[i][0])+"Y: "+String.valueOf(pieza.coordenadas[i][1]));
+            } 
+        }
+        
+        boolean choqueDeFigura(){
+            
+            Figura pieza = tablero.figuraActual;
+            pieza.getCoordenadas();
+            boolean choque = false;
+            for(int i = 0;i<4;i++){
+                for(int j = 0;j<2;j++){
+                    if(!tablero.tableroLabels[pieza.coordenadas[i][0]+1][pieza.coordenadas[i][1]].isEmpty())
+                        choque = true;
+                }
+            }
+            return choque;
+    }
 }
+    
+    
+    
+

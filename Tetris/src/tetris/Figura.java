@@ -19,9 +19,7 @@ public abstract class Figura {
     Point ejeDeRotacion = new Point();
     int coordenadas [][];
     int valores [][][];
-    int maxX = 0;
-    int maxY;
-    int minX;
+    int maxY,maxX,minX;
     
     Figura(){
         coordenadas = new int[4][2];
@@ -34,14 +32,16 @@ public abstract class Figura {
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { 1, 1 } }, // L
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { -1, 1 } } // L al revés
         };
-        
     }
     
     abstract void rotar();
     abstract void impresion(int x,int y);
-    abstract void detenerCaida();
     abstract void nuevaFigura();
     
+    void detenerCaida(){
+
+    }
+
     void setCoordenadas(int x,int y){
         for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
@@ -52,12 +52,12 @@ public abstract class Figura {
             }
         }
     }
-        public int[][] getCoordenadas() {
+    
+    int[][] getCoordenadas(){
         return coordenadas;
-        
-        
     }
-void setMaxY(){
+    
+    void setMaxY(){
         int mayor = coordenadas[0][1];
         for(int i = 1;i<4;i++){
             mayor = Math.max(mayor, coordenadas[i][1]);
@@ -69,41 +69,47 @@ void setMaxY(){
         for(int i = 1;i<4;i++){
             mayor = Math.max(mayor, coordenadas[i][0]);
     }
+        //System.out.println(mayor);
         this.maxX = mayor;
     }
     void setMinY(){
         int menor = coordenadas[0][0];
         for(int i = 1;i<4;i++){
-            menor = Math.max(menor, coordenadas[i][0]);
+            menor = Math.min(menor, coordenadas[i][0]);
     }
+        //System.out.println(menor);
         this.minX = menor;
     }
 }
     
 
 
-enum ColorFiguras{
+enum TipoFiguras{
     FIGURAL,FIGURAT,FIGURAJ,FIGURAZ,FIGURAS,FIGURAO,
     FIGURAI;
+    
+    void selecFigura(TipoFiguras figura){
+        switch(figura){
+            //case 
+        }
+    }
 }
 
 class FiguraL extends Figura{
 
     public FiguraL() {
         nuevaFigura();
-        setMaxY();
     }
     
     @Override
     void nuevaFigura(){
         this.color = Color.ORANGE;
-        this.coordenadas = valores[0];    
+        this.coordenadas = valores[4];  
+        setMaxX();
+        setMaxY();
+        setMinY();
     }
     
-    @Override
-    void detenerCaida(){
-        int s = 0;
-}
     @Override
     void rotar(){
         int s = 0;
@@ -115,7 +121,5 @@ class FiguraL extends Figura{
         this.ejeDeRotacion.y = y;
         this.setCoordenadas(x, y);
 }
-
-
     
 }
