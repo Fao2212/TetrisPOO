@@ -5,6 +5,8 @@
  */
 package tetris;
 
+import java.awt.Color;
+
 
 public class Tablero extends javax.swing.JFrame {
 
@@ -71,6 +73,18 @@ public class Tablero extends javax.swing.JFrame {
         piezas[1] = piezas[2];
         piezas[2] = null;
         return temp;
+    }
+    
+    public void checkTablero(){
+        for (int i = COLUMNAS_X-1; i > -1; i--) {
+            for (int j = FILAS_Y-1; j > -1; j--) {
+                if (tableroLabels[i][j].label.getBackground()!= Color.DARK_GRAY) 
+                    tableroLabels[i][j].setEmpty(false); 
+                else
+                    tableroLabels[i][j].setEmpty(true); 
+            }
+        }
+        index_x = COLUMNAS_X/2;
     }
     
 

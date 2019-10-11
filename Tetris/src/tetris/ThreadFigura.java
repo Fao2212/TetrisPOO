@@ -18,7 +18,7 @@ public class ThreadFigura extends Thread {
     private ArrayList<Figura> figuras;
     private Tablero tablero;
     
-    private boolean running;
+    private boolean running,chocar;
     private boolean paused = false;
     private double factorVelocidad = 1.0;
     private int milisegundosDefault = 2000;
@@ -35,11 +35,12 @@ public class ThreadFigura extends Thread {
     public void run() {
     while(running){
         for (int i = -3; i <= tablero.FILAS_Y; i++) {
-            if(i == tablero.FILAS_Y-1){
-                tocarFondo();
-            }
            int columnaActual = tablero.getIndex_x();
                 mostrarPieza(columnaActual,i);
+            if(chocar == true){
+                chocar = false;
+                break;
+            }
             try {
                 sleep(100);
             } catch (InterruptedException ex) {
@@ -48,10 +49,8 @@ public class ThreadFigura extends Thread {
                 borrarPieza(columnaActual, i);
         }
         //Se me ocurre un par de for que revise si algo esta pintado de color le haga un set de empty o de false.
-        System.out.println(tablero.tableroLabels[4][18].isEmpty());
-        System.out.println(tablero.tableroLabels[5][18].isEmpty());
-        System.out.println(tablero.tableroLabels[4][19].isEmpty());
-        System.out.println(tablero.tableroLabels[5][19].isEmpty());
+        System.out.println("pra");
+        tablero.checkTablero();
     }
 }
     
@@ -89,11 +88,13 @@ public class ThreadFigura extends Thread {
         setPiezas();
         pieza.setCoordenadas(columnaActual,filaActual);
         tablero.figuraActual  = pieza;
+        if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY ){
         for(int i = 0;i<4;i++){
-            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY ){
                     tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(pieza.color);
 
         }
+            if(choqueDeFigura())
+                chocar = true;
         }
     }
     public void borrarPieza(int columnaActual,int filaActual){
@@ -121,7 +122,8 @@ public class ThreadFigura extends Thread {
             boolean choque = false;
             for(int i = 0;i<4;i++){
                 for(int j = 0;j<2;j++){
-                    if(!tablero.tableroLabels[pieza.coordenadas[i][0]+1][pieza.coordenadas[i][1]].isEmpty())
+                    if(pieza.coordenadas[i][1]<19)
+                    if(!tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]+1].isEmpty())
                         choque = true;
                 }
             }
