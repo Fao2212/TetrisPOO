@@ -52,6 +52,13 @@ public abstract class Figura {
             }
         }
     }
+    void original(int figura){
+        for(int i = 0;i<4;i++){
+            for(int j = 0;j<2;j++){
+                    coordenadas[i][j] = valores[figura][i][j];
+            }
+        }
+    }
     
     int[][] getCoordenadas(){
         return coordenadas;
@@ -80,6 +87,14 @@ public abstract class Figura {
         //System.out.println(menor);
         this.minX = menor;
     }
+    
+    void imprimirCoordenadas(){
+            for(int i = 0;i<4;i++){
+            for(int j = 0;j<2;j++){
+                System.out.println(coordenadas[i][j]);
+            }
+        }
+}
 }
     
 
@@ -97,14 +112,14 @@ enum TipoFiguras{
 
 class FiguraL extends Figura{
 
-    public FiguraL() {
+    public FiguraL() {//choque lateral
         nuevaFigura();
     }
     
     @Override
     void nuevaFigura(){
         this.color = Color.ORANGE;
-        this.coordenadas = valores[4];  
+        original(4); 
         setMaxX();
         setMaxY();
         setMinY();
@@ -121,5 +136,5 @@ class FiguraL extends Figura{
         this.ejeDeRotacion.y = y;
         this.setCoordenadas(x, y);
 }
-    
+
 }

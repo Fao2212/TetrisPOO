@@ -23,11 +23,14 @@ public class Tablero extends javax.swing.JFrame {
     MyJLabel[][] tableroLabels = new MyJLabel[COLUMNAS_X][FILAS_Y];
     ThreadFigura threadFigura;
     Figura figuraActual;
+    int score,totalscore;
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
         this.index_y = 0;
         this.piezas = new Figura[3];
+        this.score = 10;
+        this.score = 0;
         initComponents();
         generarTablero();
         threadFigura = new ThreadFigura(this);
@@ -57,29 +60,57 @@ public class Tablero extends javax.swing.JFrame {
         return this.index_x;
     }    
     public int decrementIndex_x(){
-        if (index_x > 0+Math.abs(figuraActual.minX))
+        if (index_x > 0+Math.abs(figuraActual.minX)&&!choquePorLaIzquierda())
             --index_x;
         return index_x;
     }
     public int incrementIndex_x(){
-        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX))
+        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX)&&!choquePorLaDerecha())
             ++index_x;
         return index_x;
     }
     
-    public Figura nextPieza(){
-        Figura temp = piezas[0];
+    public void nextPieza(){
+        figuraActual = piezas[0];
         piezas[0] = piezas[1];
         piezas[1] = piezas[2];
         piezas[2] = null;
-        return temp;
+        //return temp;
     }
+    
+    public boolean choquePorLaDerecha(){//Revisar la condicion con movimientos muy rapidos se come una figura
+            Figura pieza = figuraActual;
+            pieza.getCoordenadas();
+            for(int i = 0;i<4;i++){
+                 if(pieza.coordenadas[i][0]==pieza.maxX)  
+                     System.out.println(pieza.coordenadas[i][0]+1);
+                     if (!tableroLabels[pieza.coordenadas[i][0]+1][pieza.coordenadas[i][1]].isEmpty()){
+                        return true;
+                     }
+            }
+            return false;
+    }
+    public boolean choquePorLaIzquierda(){
+            Figura pieza = figuraActual;
+            pieza.getCoordenadas();
+            for(int i = 0;i<4;i++){
+                 if(pieza.coordenadas[i][0]==pieza.minX)  
+                     System.out.println(pieza.coordenadas[i][0]-1);
+                     if (!tableroLabels[pieza.coordenadas[i][0]-1][pieza.coordenadas[i][1]].isEmpty()){
+                        return true;
+                     }
+            }
+            return false;
+    }
+            
+
     
     public void checkTablero(){
         for (int i = COLUMNAS_X-1; i > -1; i--) {
             for (int j = FILAS_Y-1; j > -1; j--) {
-                if (tableroLabels[i][j].label.getBackground()!= Color.DARK_GRAY) 
-                    tableroLabels[i][j].setEmpty(false); 
+                if (tableroLabels[i][j].label.getBackground()!= Color.DARK_GRAY){ 
+                    tableroLabels[i][j].setEmpty(false);
+                    }
                 else
                     tableroLabels[i][j].setEmpty(true); 
             }
@@ -87,7 +118,52 @@ public class Tablero extends javax.swing.JFrame {
         index_x = COLUMNAS_X/2;
     }
     
-
+    void gravedad(int fila){
+        limpiarLinea(fila);
+        repintar(fila);
+        
+    }
+    void addToScore(int lineas){
+        totalscore += score * lineas; 
+    }
+    void limpiarLinea(int fila){
+        for(int i = 0;i<10;i++){//Esto puede ser funcion limpiarFila
+            tableroLabels[i][fila].setEmpty(true);
+            tableroLabels[i][fila].label.setBackground(Color.DARK_GRAY);
+        }
+    }
+    
+    void repintar(int fila){
+        for(int i = fila;i>0;i--){
+            for (int j = 0; j < 10; j++) {
+                tableroLabels[j][i].label.setBackground(tableroLabels[j][i-1].label.getBackground());
+            }
+        }
+        checkTablero();
+    }
+    
+    void fullRows(){
+        boolean fullRow = true;
+        int cantidadDeLineas = 0;
+        for(int i = FILAS_Y-1;i>-1;i--){
+          for(int j = COLUMNAS_X-1;j>-1;j--){
+            if(tableroLabels[j][i].isEmpty()){
+                  fullRow = false;
+                  break;
+              }
+          }
+            if(fullRow == false){
+                fullRow = true;
+            }
+            else{
+                cantidadDeLineas ++;
+                gravedad(i);
+                fullRow = true;
+            }
+         
+        }
+        addToScore(cantidadDeLineas);
+    }//Luego que se encargue de repintar el tablero
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
