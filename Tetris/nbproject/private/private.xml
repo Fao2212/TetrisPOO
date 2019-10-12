@@ -4,10 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/Figura.java</file>
+            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/FileManager.java</file>
+            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/formLoad.java</file>
+            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/formSave.java</file>
             <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/Tetris.java</file>
+            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/MainMenu.java</file>
+            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/Partida.java</file>
             <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/Tablero.java</file>
-            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/ThreadFigura.java</file>
-            <file>file:/C:/Users/ferol/Documents/NetBeansProjects/Tetris/src/tetris/TableroLogico.java</file>
         </group>
     </open-files>
 </project-private>

@@ -19,6 +19,7 @@ public abstract class Figura {
     Point ejeDeRotacion = new Point();
     int coordenadas [][];
     int valores [][][];
+    TipoFiguras tipo;
     int maxY,maxX,minX;
     
     Figura(){
@@ -100,15 +101,38 @@ public abstract class Figura {
 
 
 enum TipoFiguras{
-    FIGURAL,FIGURAT,FIGURAJ,FIGURAZ,FIGURAS,FIGURAO,
-    FIGURAI;
+    FIGURAZ,FIGURAS,FIGURAI,FIGURAT,FIGURAO,FIGURAL,
+    FIGURAJ;
+}
+
+    //Color color;
     
-    void selecFigura(TipoFiguras figura){
+   /* void selecFigura(TipoFiguras figura){
         switch(figura){
-            //case 
+            case FIGURAL:
+               color = Color.ORANGE;
+               break;
+            case FIGURAT:
+                color = Color.MAGENTA;
+               break;       
+            case FIGURAJ:
+                color = Color.BLUE;
+               break;
+            case FIGURAZ:
+                color = Color.RED;
+               break;
+            case FIGURAS:
+                color = Color.GREEN;
+               break;
+            case FIGURAO:
+                color = Color.YELLOW;
+               break;
+            case FIGURAI:
+                color = Color.CYAN;
+               break;
         }
     }
-}
+}*/
 
 class FiguraL extends Figura{
 
@@ -118,8 +142,9 @@ class FiguraL extends Figura{
     
     @Override
     void nuevaFigura(){
-        this.color = Color.ORANGE;
-        original(4); 
+        this.tipo = TipoFiguras.FIGURAL;
+        this.color = Color.RED;
+        original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
         setMinY();

@@ -12,33 +12,33 @@ public class Tablero extends javax.swing.JFrame {
 
     // cambiar este valor para dimensiones
     public static int COLUMNAS_X = 10;
-    public static int FILAS_Y = 20;
-    public static int DIMENSION = 30;
-    //la columna posucionado
-    //Aqui se puede llamar la distancia de la figura
+    public static int FILAS_Y = 23;
+    public static int DIMENSION = 25;
     private int index_x;
-    private final int index_y;
+    private int index_y;
     Figura piezas[];
-    // Tablero con objetos JButton
     MyJLabel[][] tableroLabels = new MyJLabel[COLUMNAS_X][FILAS_Y];
     ThreadFigura threadFigura;
     Figura figuraActual;
     int score,totalscore;
+    Partida partida;//Se hace una pausa se pone el nombre de la partida guarda los datos y se quita la pausa con un continue y un exit
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
         this.index_y = 0;
         this.piezas = new Figura[3];
+        this.totalscore = 0;
         this.score = 10;
-        this.score = 0;
         initComponents();
         generarTablero();
         threadFigura = new ThreadFigura(this);
         threadFigura.setPiezas();
+        crearPartida();
     
     }
     
     public void generarTablero(){
+        System.out.println(FILAS_Y);
     for(int i=0;i<COLUMNAS_X;i++)
         for(int j=0;j<FILAS_Y;j++)
         {
@@ -54,18 +54,31 @@ public class Tablero extends javax.swing.JFrame {
                 panelTablero.setSize(DIMENSION*COLUMNAS_X, DIMENSION*FILAS_Y);
                 
         }
+        tableroInvisible();
     }
-    
+    public void tableroInvisible(){
+        for (int i = 0; i < COLUMNAS_X; i++) {
+            for (int j = 0; j < 4; j++) {
+                tableroLabels[i][j].label.setVisible(false);
+            }
+        }
+    }
+    public void setIndex_y(int filaActual){
+        this.index_y = filaActual;
+    }
+    public int getIndex_y(){
+        return this.index_y;
+    }
     public int getIndex_x (){
         return this.index_x;
     }    
     public int decrementIndex_x(){
-        if (index_x > 0+Math.abs(figuraActual.minX)&&!choquePorLaIzquierda())
+        if (index_x > 0+Math.abs(figuraActual.minX)&&!choquePorLaIzquierda()&&index_y >2)
             --index_x;
         return index_x;
     }
     public int incrementIndex_x(){
-        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX)&&!choquePorLaDerecha())
+        if (index_x < COLUMNAS_X-1-Math.abs(figuraActual.maxX)&&!choquePorLaDerecha()&&index_y >2)
             ++index_x;
         return index_x;
     }
@@ -142,6 +155,43 @@ public class Tablero extends javax.swing.JFrame {
         checkTablero();
     }
     
+    
+    private void crearPartida(){
+        this.partida = new Partida();
+    }
+    
+    private void cargaPartida(){
+        this.index_x = partida.index_x;
+        this.index_y = partida.index_y;
+        this.totalscore = partida.score;
+        this.figuraActual = partida.figuraActual;
+        this.piezas = partida.piezas;
+    }
+    
+    void saveGame(String nombre){
+        partida.nombre = nombre;
+        dataToSave();
+        partida.saveData(partida);
+    }
+    
+    void dataToSave(){
+        //Show ventana de escribir el nombre de la partida
+        //this.partiada.nombre = ventana.getText();
+        this.partida.figuraActual = this.figuraActual;
+        this.partida.index_x = this.index_x;
+        this.partida.index_y =  this.index_y;
+        this.partida.piezas = this.piezas;
+        this.partida.score = this.totalscore;
+    }
+    
+    void loadGame(String nombre){
+        this.partida = partida.loadData(nombre);
+        System.out.println(partida);
+        cargaPartida();
+        this.setVisible(true);
+        this.threadFigura.start();
+    }
+    
     void fullRows(){
         boolean fullRow = true;
         int cantidadDeLineas = 0;
@@ -174,10 +224,10 @@ public class Tablero extends javax.swing.JFrame {
     private void initComponents() {
 
         panelTablero = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         btnLEFT = new javax.swing.JButton();
         brtRIGHT = new javax.swing.JButton();
         btnVelocidad = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -193,13 +243,6 @@ public class Tablero extends javax.swing.JFrame {
             panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 600, Short.MAX_VALUE)
         );
-
-        jButton1.setText("Start");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         btnLEFT.setText("<< LEFT");
         btnLEFT.addActionListener(new java.awt.event.ActionListener() {
@@ -222,6 +265,13 @@ public class Tablero extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setText("Pause");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -231,16 +281,16 @@ public class Tablero extends javax.swing.JFrame {
                 .addComponent(panelTablero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(53, 53, 53)
                         .addComponent(btnLEFT)
                         .addGap(178, 178, 178)
                         .addComponent(brtRIGHT))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(203, 203, 203)
-                        .addComponent(btnVelocidad, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnVelocidad, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(167, 167, 167)
+                        .addComponent(jButton2)))
                 .addContainerGap(89, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -251,9 +301,9 @@ public class Tablero extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(panelTablero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jButton1)
-                        .addGap(196, 196, 196)
+                        .addGap(63, 63, 63)
+                        .addComponent(jButton2)
+                        .addGap(165, 165, 165)
                         .addComponent(btnVelocidad, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(98, 98, 98)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -264,10 +314,6 @@ public class Tablero extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        threadFigura.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnLEFTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLEFTActionPerformed
         // TODO add your handling code here:
@@ -283,6 +329,11 @@ public class Tablero extends javax.swing.JFrame {
         // TODO add your handling code here:
         threadFigura.decrementVelocidad();
     }//GEN-LAST:event_btnVelocidadActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        threadFigura.pause();
+        new formSave (this).setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -324,7 +375,7 @@ public class Tablero extends javax.swing.JFrame {
     private javax.swing.JButton brtRIGHT;
     private javax.swing.JButton btnLEFT;
     private javax.swing.JButton btnVelocidad;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel panelTablero;
     // End of variables declaration//GEN-END:variables
 

@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.html.StyleSheet;
 
 /**
  *
@@ -22,6 +23,7 @@ public class ThreadFigura extends Thread {
     private boolean paused = false;
     private double factorVelocidad = 1.0;
     private int milisegundosDefault = 2000;
+    private boolean gameOver = false;
 
     public ThreadFigura(Tablero tablero) {
         this.tablero = tablero;
@@ -37,28 +39,42 @@ public class ThreadFigura extends Thread {
         tablero.nextPieza();
         setPiezas();
         //tablero.figuraActual;
-        for (int i = -3; i <= tablero.FILAS_Y; i++) {
+        for (int i = tablero.getIndex_y(); i <= tablero.FILAS_Y; i++) {
            int columnaActual = tablero.getIndex_x();
                 mostrarPieza(columnaActual,i);
             if(chocar == true){
-                chocar = false;
-                break;
+                if(gameOver() == false){
+                    chocar = false;
+                    break;
+                }
+                else{
+                    gameOver = true;
+                    break;
+                }
             }
             try {
                 //Creo que por aca seria bueno descartivar botones
-                sleep(100);
+                //sleep((long) (factorVelocidad*milisegundosDefault));
+                sleep(800);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            while (paused) {                
+               try {
+                   sleep(100);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
+               }
             }
                 borrarPieza(columnaActual, i);
                 llamarFuncion();
         }
         //O desactivar aca
         tablero.checkTablero();
-        try {
-            sleep(100);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
+        tablero.setIndex_y(0);
+        if(gameOver == true){
+            System.out.println("game Over");
+            break;
         }
     }
 }
@@ -93,6 +109,7 @@ public class ThreadFigura extends Thread {
     }
     
     public void mostrarPieza(int columnaActual,int filaActual){
+        tablero.setIndex_y(filaActual);
         Figura pieza = tablero.figuraActual;
         if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY ){
             pieza.impresion(columnaActual, filaActual);
@@ -112,7 +129,7 @@ public class ThreadFigura extends Thread {
             if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-tablero.figuraActual.maxY)
                 tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(Color.DARK_GRAY);
         }
-                pieza.original(4);
+                pieza.original(pieza.tipo.ordinal());
         }
         
         boolean choqueDeFigura(){
@@ -122,7 +139,7 @@ public class ThreadFigura extends Thread {
             boolean choque = false;
             for(int i = 0;i<4;i++){
                 for(int j = 0;j<2;j++){
-                    if(pieza.coordenadas[i][1]<19)
+                    if(pieza.coordenadas[i][1]<Tablero.FILAS_Y-1)
                     if(!tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]+1].isEmpty())
                         choque = true;
                 }
@@ -132,6 +149,18 @@ public class ThreadFigura extends Thread {
         
     void llamarFuncion(){
         tablero.fullRows();
+    }
+    
+    boolean gameOver(){
+        for (int i = 0; i < 4; i++) {
+                if(tablero.figuraActual.coordenadas[i][1]<3)
+                    return true;
+        }
+        return false;
+    }
+    
+    void pause(){
+        paused = !paused;
     }
 }
     
