@@ -8,6 +8,16 @@ package tetris;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JPanel;
 
 
 public class Tablero extends javax.swing.JFrame {
@@ -18,13 +28,13 @@ public class Tablero extends javax.swing.JFrame {
     public static int DIMENSION = 25;
     private int index_x;
     private int index_y;
+    ShowShape figura1,figura2;
     Figura piezas[]; //Hacer arayList y add 3 piezas nuevas
     MyJLabel[][] tableroLabels = new MyJLabel[COLUMNAS_X][FILAS_Y];
     ThreadFigura threadFigura;
     Figura figuraActual; 
     int score,totalscore;
-    Partida partida;//Se hace una pausa se pone el nombre de la partida guarda los datos y se quita la pausa con un continue y un exit
-    boolean vaARotar;
+    Partida partida;
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
@@ -32,7 +42,6 @@ public class Tablero extends javax.swing.JFrame {
         this.piezas = new Figura[3];
         this.totalscore = 0;
         this.score = 10;
-        this.vaARotar = false;
         initComponents();
         generarTablero();
         threadFigura = new ThreadFigura(this);
@@ -61,6 +70,8 @@ public class Tablero extends javax.swing.JFrame {
                 
         }
         tableroInvisible();
+        figura1 = new ShowShape(DIMENSION, panelFigura1);
+        figura2 = new ShowShape(DIMENSION, panelFigura2);
     }
     public void tableroInvisible(){
         for (int i = 0; i < COLUMNAS_X; i++) {
@@ -89,6 +100,11 @@ public class Tablero extends javax.swing.JFrame {
         return index_x;
     }
     
+    public void showPieza(){
+        figura1.mostrar(piezas[0]);
+        figura2.mostrar(piezas[1]);
+    }
+    
     public void nextPieza(){
         figuraActual = piezas[0];
         piezas[0] = piezas[1];
@@ -102,6 +118,7 @@ public class Tablero extends javax.swing.JFrame {
             pieza.getCoordenadas();
             for(int i = 0;i<4;i++){
                  if(pieza.coordenadas[i][0]==pieza.maxX)  
+                     System.out.println(pieza.coordenadas[i][0]+1);
                      if (!tableroLabels[pieza.coordenadas[i][0]+1][pieza.coordenadas[i][1]].isEmpty()){
                         return true;
                      }
@@ -113,6 +130,7 @@ public class Tablero extends javax.swing.JFrame {
             pieza.getCoordenadas();
             for(int i = 0;i<4;i++){
                  if(pieza.coordenadas[i][0]==pieza.minX)  
+                     System.out.println(pieza.coordenadas[i][0]-1);
                      if (!tableroLabels[pieza.coordenadas[i][0]-1][pieza.coordenadas[i][1]].isEmpty()){
                         return true;
                      }
@@ -190,6 +208,7 @@ public class Tablero extends javax.swing.JFrame {
     
     void loadGame(String nombre){
         this.partida = partida.loadData(nombre);
+        System.out.println(partida);
         cargaPartida();
         this.setVisible(true);
         this.threadFigura.start();
@@ -218,8 +237,26 @@ public class Tablero extends javax.swing.JFrame {
         addToScore(cantidadDeLineas);
     }
     
+    void playMusic(){
+        try{
+         File musicPath = new File("tetris.wav");
+         if(musicPath.exists()){
+            AudioInputStream audioinput = AudioSystem.getAudioInputStream(musicPath);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioinput);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+         }
+         else
+             System.out.println("No se encuentra archivo");
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+    
+    
 class TAdapter extends KeyAdapter {
-    boolean key = false;
          @Override
          public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();  
@@ -233,25 +270,12 @@ class TAdapter extends KeyAdapter {
            case KeyEvent.VK_DOWN:
                 threadFigura.decrementVelocidad();
                 break;
-           case KeyEvent.VK_UP:
-               vaARotar();     
-               break;
-               
                
 
     }
          }
 }
 
-void vaARotar(){
-    this.vaARotar = true;
-}
-
-void rotar(){
-    
-   figuraActual.rotar();
-   figuraActual.valor = figuraActual.coordenadas;
-}
 
 //Luego que se encargue de repintar el tablero
     /**
@@ -270,8 +294,8 @@ void rotar(){
         brtRIGHT = new javax.swing.JButton();
         btnVelocidad = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        panelFigura1 = new javax.swing.JPanel();
+        panelFigura2 = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -298,7 +322,6 @@ void rotar(){
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(139, 238, 141));
 
-        panelTablero.setBackground(new java.awt.Color(102, 102, 102));
         panelTablero.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 panelTableroKeyPressed(evt);
@@ -344,29 +367,29 @@ void rotar(){
             }
         });
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
+        panelFigura1.setBackground(new java.awt.Color(102, 102, 102));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelFigura1Layout = new javax.swing.GroupLayout(panelFigura1);
+        panelFigura1.setLayout(panelFigura1Layout);
+        panelFigura1Layout.setHorizontalGroup(
+            panelFigura1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 124, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelFigura1Layout.setVerticalGroup(
+            panelFigura1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 125, Short.MAX_VALUE)
         );
 
-        jPanel2.setBackground(new java.awt.Color(102, 102, 102));
+        panelFigura2.setBackground(new java.awt.Color(102, 102, 102));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelFigura2Layout = new javax.swing.GroupLayout(panelFigura2);
+        panelFigura2.setLayout(panelFigura2Layout);
+        panelFigura2Layout.setHorizontalGroup(
+            panelFigura2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 124, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelFigura2Layout.setVerticalGroup(
+            panelFigura2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 125, Short.MAX_VALUE)
         );
 
@@ -395,10 +418,10 @@ void rotar(){
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(panelFigura2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(panelFigura1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         layout.setVerticalGroup(
@@ -407,9 +430,9 @@ void rotar(){
                 .addGap(36, 36, 36)
                 .addComponent(jButton2)
                 .addGap(98, 98, 98)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelFigura1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelFigura2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(brtRIGHT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -492,10 +515,54 @@ void rotar(){
     private javax.swing.JButton jButton2;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JFrame jFrame2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel panelFigura1;
+    private javax.swing.JPanel panelFigura2;
     private javax.swing.JPanel panelTablero;
     // End of variables declaration//GEN-END:variables
 
+    
+}
+
+class ShowShape{
+    
+    MyJLabel[][] grid = new MyJLabel[5][5];
+    Figura figura;
+    int dimension;
+
+    public ShowShape(int dimension,JPanel panel) {
+        this.dimension = dimension;
+        createGrid(panel);
+    }
+    
+    void createGrid(JPanel panel){
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                
+                grid[i][j] = new MyJLabel();
+                grid[i][j].setEmpty(true);
+                
+
+                panel.add(grid[i][j].label);
+                // coloca dimensiones y localidad
+                grid[i][j].label.setBounds(dimension*i, dimension*j, dimension, dimension);
+
+                panel.setSize(dimension*3, dimension*3);
+            }
+        }
+    }
+    
+    void mostrar(Figura pieza){
+        for (int i = 0; i < 4; i++) {
+            grid[pieza.coordenadas[i][0]+2][pieza.coordenadas[i][1]+2].label.setBackground(pieza.color);
+        }
+    }
+    
+    void clearGrid(){
+               for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                grid[i][j].label.setBackground(Color.DARK_GRAY);
+            }
+            } 
+    }
     
 }

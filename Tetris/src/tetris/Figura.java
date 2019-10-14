@@ -23,11 +23,6 @@ public abstract class Figura {
     TipoFiguras tipo;
     int maxY,maxX,minX;
     Figura figuraActualll;
-    int rot[][];
-    int rotaciones[][][];
-    int valor[][];
-    int pos;
-    
     
     Figura(){
         coordenadas = new int[4][2];
@@ -40,22 +35,14 @@ public abstract class Figura {
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { 1, 1 } }, // L
         { { 0, -1 },  { 0, 0 },  { 0, 1 },   { -1, 1 } } // L al revés
         };
-        pos = 0;
     }
     
     abstract void rotar();
     abstract void impresion(int x,int y);
     abstract void nuevaFigura();
-    void reSize(){
-        setMinY();
-        setMaxX();
-        setMaxY();
-    }
-    void aumentarPos(){
-        if( pos<3)
-            pos += 1;
-        else
-            pos = 0;
+    
+    void detenerCaida(){
+
     }
 
     void setCoordenadas(int x,int y){
@@ -71,7 +58,7 @@ public abstract class Figura {
     void original(int figura){
         for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = valor[i][j];
+                    coordenadas[i][j] = valores[figura][i][j];
             }
         }
     }
@@ -131,7 +118,6 @@ class FiguraL extends Figura{
     void nuevaFigura(){
         this.tipo = TipoFiguras.FIGURAL;
         this.color = Color.ORANGE;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -140,20 +126,15 @@ class FiguraL extends Figura{
     
     @Override
     void rotar(){
-        aumentarPos();
-       rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesL[][][] = {
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { 1, 1 } }, //L normal
             { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 1, -1 } }, //Segunda rotación a la izquierda
             { { 0, 1 }, { 0, 0 }, { 0, -1 }, { -1, -1 } }, //Tercera rotación a la izquierda
             { { 1, 0 }, { 0, 0 }, { -1, 0 }, { -1, 1 } }//Cuarta rotación a la izquierda
              };
-        for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
         }
-        reSize();
-    }
+
     
     @Override
     void impresion(int x,int y){
@@ -171,19 +152,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-        int rotaciones[][][] = {
+        int s = 0;
+        int rotacionesT[][][] = {
             { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, -1 } }, //T normal
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { -1, 0 } }, //Segunda rotación a la izquierda
             { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, 1 } }, //Tercera rotación a la izquierda
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { -1, 0 } }//Cuarta rotación a la izquierda
              };
-                for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-                reSize();
         }
     
 
@@ -198,7 +173,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAT;
         this.color = Color.YELLOW;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -213,19 +187,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-       rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesZ[][][] = {
             { { -1, -1 }, { 0, -1}, { 0, 0 }, {1, 0 } }, //Z normal
             { { 1, -1 }, { 1, 0 }, { 0, 0 }, { 0, 1 } }, //Segunda rotación a la izquierda
             { { -1, -1 }, { 0, -1}, { 0, 0 }, {1, 0 } }, //Tercera rotación a la izquierda
             { { 1, -1 }, { 1, 0 }, { 0, 0 }, { 0, 1 } }//Cuarta rotación a la izquierda
              };
-      for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-      reSize();
         }
     
     
@@ -241,7 +209,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAZ;
         this.color = Color.MAGENTA;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -256,19 +223,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-       rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesJ[][][] = {
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { -1, 1 } }, //J normal
             { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 1, 1 } }, //Segunda rotación a la izquierda
             { { 0, 1 }, { 0, 0 }, { 0, -1 }, { 1, -1 } }, //Tercera rotación a la izquierda
             { { 1, 0 }, { 0, 0 }, { -1, 0 }, { -1, -1 } }//Cuarta rotación a la izquierda
              };
-       for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-       reSize();
     }
     
     @Override
@@ -282,7 +243,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAJ;
         this.color = Color.BLUE;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -297,19 +257,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-       rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesO[][][] = {
             { { -1, -1 }, { 0, -1}, { -1, 0 }, { 0, 0 } }, //O normal
             { { -1, -1 }, { 0, -1}, { -1, 0 }, { 0, 0 } }, //Segunda rotación a la izquierda
             { { -1, -1 }, { 0, -1}, { -1, 0 }, { 0, 0 } }, //Tercera rotación a la izquierda
             { { -1, -1 }, { 0, -1}, { -1, 0 }, { 0, 0 } }//Cuarta rotación a la izquierda
              };
-         for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-         reSize();
     }
     
     @Override
@@ -323,7 +277,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAO;
         this.color = Color.PINK;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -338,19 +291,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-        rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesI[][][] = {
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 2 } }, //I normal
             { { -2, 0 }, { -1, 0 }, { 0, 0 }, { 1, 0 } }, //Segunda rotación a la izquierda
             { { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 2 } }, //Tercera rotación a la izquierda
             { { -2, 0 }, { -1, 0 }, { 0, 0 }, { 1, 0 } }//Cuarta rotación a la izquierda
              };
-       for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-       reSize();
     }
     
     @Override
@@ -364,7 +311,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAI;
         this.color = Color.LIGHT_GRAY;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
@@ -379,19 +325,13 @@ class FiguraT extends Figura{
     }
     @Override
     void rotar() {
-        aumentarPos();
-        rotaciones = new int [][][]{
+        int s = 0;
+        int rotacionesS[][][] = {
             { { 1, -1 }, { 0, -1 }, { 0, 0 }, { -1, 0 } }, //S normal
             { { -1, -1 }, { -1, 0 }, { 0, 0 }, { 0, 1 } }, //Segunda rotación a la izquierda
             { { 1, -1 }, { 0, -1 }, { 0, 0 }, { -1, 0 } }, //Tercera rotación a la izquierda
             { { -1, -1 }, { -1, 0 }, { 0, 0 }, { 0, 1 } }//Cuarta rotación a la izquierda
              };
-        for(int i = 0;i<4;i++){
-            for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
-    }
-        }
-        reSize();
     }
     
     @Override
@@ -405,7 +345,6 @@ class FiguraT extends Figura{
     void nuevaFigura() {
         this.tipo = TipoFiguras.FIGURAS;
         this.color = Color.GREEN;
-        valor = valores[tipo.ordinal()];
         original(tipo.ordinal()); 
         setMaxX();
         setMaxY();
