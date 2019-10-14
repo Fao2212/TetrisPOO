@@ -11,13 +11,13 @@ package tetris;
  */
 public class Tetris {
 
-    /**
-     * @param args the command line arguments
-     */
+    Tablero tablero;
+    MainMenu menu;
+   
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Tablero().setVisible(true);
+                new MainMenu().setVisible(true);
             }
         });
     }
