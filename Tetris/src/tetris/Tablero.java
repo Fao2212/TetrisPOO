@@ -24,6 +24,7 @@ public class Tablero extends javax.swing.JFrame {
     Figura figuraActual; 
     int score,totalscore;
     Partida partida;//Se hace una pausa se pone el nombre de la partida guarda los datos y se quita la pausa con un continue y un exit
+    boolean vaARotar;
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
@@ -31,6 +32,7 @@ public class Tablero extends javax.swing.JFrame {
         this.piezas = new Figura[3];
         this.totalscore = 0;
         this.score = 10;
+        this.vaARotar = false;
         initComponents();
         generarTablero();
         threadFigura = new ThreadFigura(this);
@@ -43,7 +45,6 @@ public class Tablero extends javax.swing.JFrame {
     }
     
     public void generarTablero(){
-        System.out.println(FILAS_Y);
     for(int i=0;i<COLUMNAS_X;i++)
         for(int j=0;j<FILAS_Y;j++)
         {
@@ -101,7 +102,6 @@ public class Tablero extends javax.swing.JFrame {
             pieza.getCoordenadas();
             for(int i = 0;i<4;i++){
                  if(pieza.coordenadas[i][0]==pieza.maxX)  
-                     System.out.println(pieza.coordenadas[i][0]+1);
                      if (!tableroLabels[pieza.coordenadas[i][0]+1][pieza.coordenadas[i][1]].isEmpty()){
                         return true;
                      }
@@ -113,7 +113,6 @@ public class Tablero extends javax.swing.JFrame {
             pieza.getCoordenadas();
             for(int i = 0;i<4;i++){
                  if(pieza.coordenadas[i][0]==pieza.minX)  
-                     System.out.println(pieza.coordenadas[i][0]-1);
                      if (!tableroLabels[pieza.coordenadas[i][0]-1][pieza.coordenadas[i][1]].isEmpty()){
                         return true;
                      }
@@ -191,7 +190,6 @@ public class Tablero extends javax.swing.JFrame {
     
     void loadGame(String nombre){
         this.partida = partida.loadData(nombre);
-        System.out.println(partida);
         cargaPartida();
         this.setVisible(true);
         this.threadFigura.start();
@@ -221,6 +219,7 @@ public class Tablero extends javax.swing.JFrame {
     }
     
 class TAdapter extends KeyAdapter {
+    boolean key = false;
          @Override
          public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();  
@@ -234,12 +233,25 @@ class TAdapter extends KeyAdapter {
            case KeyEvent.VK_DOWN:
                 threadFigura.decrementVelocidad();
                 break;
+           case KeyEvent.VK_UP:
+               vaARotar();     
+               break;
+               
                
 
     }
          }
 }
 
+void vaARotar(){
+    this.vaARotar = true;
+}
+
+void rotar(){
+    
+   figuraActual.rotar();
+   figuraActual.valor = figuraActual.coordenadas;
+}
 
 //Luego que se encargue de repintar el tablero
     /**

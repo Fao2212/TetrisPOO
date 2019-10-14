@@ -59,6 +59,7 @@ public class ThreadFigura extends Thread {
             }
             try {
                 //Creo que por aca seria bueno descartivar botones
+                if(i>3)
                 sleep((long) (factorVelocidad*milisegundosDefault));
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
@@ -71,6 +72,10 @@ public class ThreadFigura extends Thread {
                }
             }
                 borrarPieza(columnaActual, i);
+                if(tablero.vaARotar == true){
+                    tablero.rotar();
+                    tablero.vaARotar = false;
+                }
                 llamarFuncion();
         }
         //O desactivar aca
@@ -153,6 +158,7 @@ public class ThreadFigura extends Thread {
     public void mostrarPieza(int columnaActual,int filaActual/*, Figura pieza*/){
         tablero.setIndex_y(filaActual);
         pieza = tablero.figuraActual;
+        pieza.imprimirCoordenadas();
         if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-tablero.figuraActual.maxY ){
             pieza.impresion(columnaActual, filaActual);
             for(int i = 0;i<4;i++){
@@ -209,9 +215,10 @@ public class ThreadFigura extends Thread {
     void pause(){
         paused = !paused;
     }
+    
+
 }
     
     
     
 
-//Si da tiempo un creador de figuras.
