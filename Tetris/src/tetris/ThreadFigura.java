@@ -41,11 +41,9 @@ public class ThreadFigura extends Thread {
     
     @Override
     public void run() {
-        tablero.playMusic();
     while(running){
         tablero.nextPieza();
-        setPiezas();      
-        tablero.showPieza();
+        setPiezas();       
         for (int i = tablero.getIndex_y(); i <= tablero.FILAS_Y; i++) {
            int columnaActual = tablero.getIndex_x();
                 mostrarPieza(columnaActual,i);
@@ -60,8 +58,10 @@ public class ThreadFigura extends Thread {
                 }
             }
             try {
+                //Creo que por aca seria bueno descartivar botones
                 if(i>3)
-                sleep((long) (factorVelocidad*milisegundosDefault));
+                    sleep(200);
+                //sleep((long) (factorVelocidad*milisegundosDefault));
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -73,12 +73,15 @@ public class ThreadFigura extends Thread {
                }
             }
                 borrarPieza(columnaActual, i);
+                if(tablero.vaARotar == true){
+                    tablero.rotar();
+                    tablero.vaARotar = false;
+                }
                 llamarFuncion();
         }
+        //O desactivar aca
         tablero.checkTablero();
         tablero.setIndex_y(0);
-        tablero.figura1.clearGrid();
-        tablero.figura2.clearGrid();
         if(gameOver == true){
             System.out.println("game Over");
             break;
@@ -172,7 +175,7 @@ public class ThreadFigura extends Thread {
         pieza = tablero.figuraActual;
         pieza.getCoordenadas();
         for(int i = 0;i<4;i++){
-            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-tablero.figuraActual.maxY)
+            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-Math.abs(tablero.figuraActual.maxY))
                 tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(Color.DARK_GRAY);
         }
                 pieza.original(pieza.tipo.ordinal());
@@ -212,9 +215,10 @@ public class ThreadFigura extends Thread {
     void pause(){
         paused = !paused;
     }
+    
+
 }
     
     
     
 
-//Si da tiempo un creador de figuras.
