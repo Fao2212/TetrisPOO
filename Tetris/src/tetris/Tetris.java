@@ -15,6 +15,8 @@ public class Tetris {
     MainMenu menu;
    
     public static void main(String[] args) {
+        int array[] = new int[10];
+        FileManager.writeObject(array, "MejoresPuntuaciones.txt");
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MainMenu().setVisible(true);

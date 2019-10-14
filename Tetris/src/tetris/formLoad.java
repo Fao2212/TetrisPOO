@@ -94,7 +94,7 @@ public class formLoad extends javax.swing.JFrame {
      */
 
 void showFiles() {
-      String path = "C:\\Users\\ferol\\Documents\\NetBeansProjects\\Tetris\\SavedGames"; 
+      String path = "C:\\Users\\ferol\\Desktop\\Carpeta de Trabajo\\Tetris\\SavedGames"; 
 
       String files;
       File folder = new File(path);

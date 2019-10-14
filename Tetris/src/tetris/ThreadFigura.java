@@ -60,7 +60,7 @@ public class ThreadFigura extends Thread {
                 }
             }
             try {
-                if(i>3)
+                if(i>2)
                 sleep((long) (factorVelocidad*milisegundosDefault));
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadFigura.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,6 +73,10 @@ public class ThreadFigura extends Thread {
                }
             }
                 borrarPieza(columnaActual, i);
+                if(tablero.vaARotar == true){
+                    tablero.rotar();
+                    tablero.vaARotar = false;
+                }
                 llamarFuncion();
         }
         tablero.checkTablero();
@@ -80,7 +84,7 @@ public class ThreadFigura extends Thread {
         tablero.figura1.clearGrid();
         tablero.figura2.clearGrid();
         if(gameOver == true){
-            System.out.println("game Over");
+            tablero.setLEVEL("Game Over");
             break;
         }
     }
@@ -172,7 +176,7 @@ public class ThreadFigura extends Thread {
         pieza = tablero.figuraActual;
         pieza.getCoordenadas();
         for(int i = 0;i<4;i++){
-            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-tablero.figuraActual.maxY)
+            if(filaActual>0 &&  filaActual<Tablero.FILAS_Y-1-Math.abs(tablero.figuraActual.maxY))
                 tablero.tableroLabels[pieza.coordenadas[i][0]][pieza.coordenadas[i][1]].label.setBackground(Color.DARK_GRAY);
         }
                 pieza.original(pieza.tipo.ordinal());

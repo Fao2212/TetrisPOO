@@ -19,19 +19,23 @@ public class Partida implements Serializable{
     Figura figuraActual;
     int score;
     Figura piezas[];
+    int level;
+    int lineas;
+    MyJLabel[][] tablero;
     
     Partida(){
-
+       tablero = new MyJLabel[10][23];
+       piezas = new Figura[3];
     }
     
     void saveData(Partida partida){
         System.out.println(partida);
-        String path = "C:\\Users\\ferol\\Documents\\NetBeansProjects\\Tetris\\SavedGames"+"\\"+partida.nombre+".txt";
+        String path = "C:\\Users\\ferol\\Desktop\\Carpeta de Trabajo\\Tetris\\SavedGames"+"\\"+partida.nombre+".txt";
         FileManager.writeObject(partida, path);      
     }
     
     Partida loadData(String nombre){
-        String path = "C:\\Users\\ferol\\Documents\\NetBeansProjects\\Tetris\\SavedGames\\"+nombre;
+        String path = "C:\\Users\\ferol\\Desktop\\Carpeta de Trabajo\\Tetris\\SavedGames\\"+nombre;
         Partida partida = (Partida)FileManager.readObject(path);
         return partida;   
     }

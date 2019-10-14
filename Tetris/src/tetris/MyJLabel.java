@@ -6,13 +6,14 @@
 package tetris;
 
 import java.awt.Color;
+import java.io.Serializable;
 import javax.swing.JLabel;
 
 /**
  *
  * @author diego
  */
-public class MyJLabel {
+public class MyJLabel implements  Serializable{
     public static final Color DEFAULT_COLOR = new Color(25, 10, 51);
     public JLabel label;
     private boolean empty = false;

@@ -35,21 +35,31 @@ public class Tablero extends javax.swing.JFrame {
     Figura figuraActual; 
     int score,totalscore;
     Partida partida;
+    boolean vaARotar;
+    int lineas;
+    int level;
+    int mejoresPuntuaciones[];
     
     public Tablero() {
         this.index_x = COLUMNAS_X/2;
         this.index_y = 0;
         this.piezas = new Figura[3];
         this.totalscore = 0;
-        this.score = 10;
+        this.score = 1;
+        this.level = 1;
+        lineas = 0;
         initComponents();
         generarTablero();
         threadFigura = new ThreadFigura(this);
         threadFigura.setPiezas();
         crearPartida();
+        this.labelLevel.setText(String.valueOf(level));
+        this.labelLineas.setText(String.valueOf(lineas));
+        this.labelScore.setText(String.valueOf(totalscore));
         this.setFocusable(true);
         this.requestFocus();
         this.addKeyListener(new TAdapter());
+        
     
     }
     
@@ -79,6 +89,10 @@ public class Tablero extends javax.swing.JFrame {
                 tableroLabels[i][j].label.setVisible(false);
             }
         }
+    }
+    
+    public void setLEVEL(String text){
+        this.labelLevel.setText(text);
     }
     public void setIndex_y(int filaActual){
         this.index_y = filaActual;
@@ -148,9 +162,9 @@ public class Tablero extends javax.swing.JFrame {
                     }
                 else
                     tableroLabels[i][j].setEmpty(true); 
-            }
-        }
-        index_x = COLUMNAS_X/2;
+            }}
+
+                index_x = COLUMNAS_X/2;
     }
     
     void gravedad(int fila){
@@ -159,7 +173,13 @@ public class Tablero extends javax.swing.JFrame {
         
     }
     void addToScore(int lineas){
-        totalscore += score * lineas; 
+        this.lineas += lineas;
+        if(lineas == 1)
+        totalscore += 1; 
+        else if(lineas == 3)
+            totalscore += 4;
+        else if(lineas ==4)
+            totalscore += 5;    
     }
     void limpiarLinea(int fila){
         for(int i = 0;i<10;i++){//Esto puede ser funcion limpiarFila
@@ -183,11 +203,20 @@ public class Tablero extends javax.swing.JFrame {
     }
     
     private void cargaPartida(){
+    for (int i = 0; i < COLUMNAS_X; i++) {
+            for (int j = 0; j < FILAS_Y; j++) {
+                this.tableroLabels[i][j].label.setBackground(partida.tablero[i][j].label.getBackground());
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            this.piezas = partida.piezas;
+        }
         this.index_x = partida.index_x;
         this.index_y = partida.index_y;
         this.totalscore = partida.score;
         this.figuraActual = partida.figuraActual;
-        this.piezas = partida.piezas;
+        this.lineas = partida.lineas;
+        this.level = partida.level;
     }
     
     void saveGame(String nombre){
@@ -199,11 +228,22 @@ public class Tablero extends javax.swing.JFrame {
     void dataToSave(){
         //Show ventana de escribir el nombre de la partida
         //this.partiada.nombre = ventana.getText();
-        this.partida.figuraActual = this.figuraActual;
+        for (int i = 0; i < COLUMNAS_X; i++) {
+            for (int j = 0; j < FILAS_Y; j++) {
+                System.out.println(this.partida.tablero[i][j]+"1");
+                System.out.println(tableroLabels[i][j]+"2");
+                this.partida.tablero[i][j] = tableroLabels[i][j];
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+                this.partida.piezas[i] = piezas[i];  
+        }
         this.partida.index_x = this.index_x;
         this.partida.index_y =  this.index_y;
         this.partida.piezas = this.piezas;
         this.partida.score = this.totalscore;
+        this.partida.level = this.level;
+        this.partida.lineas = this.lineas;
     }
     
     void loadGame(String nombre){
@@ -235,6 +275,8 @@ public class Tablero extends javax.swing.JFrame {
          
         }
         addToScore(cantidadDeLineas);
+        labelLineas.setText(String.valueOf(lineas));
+        labelScore.setText(String.valueOf(totalscore));
     }
     
     void playMusic(){
@@ -270,10 +312,23 @@ class TAdapter extends KeyAdapter {
            case KeyEvent.VK_DOWN:
                 threadFigura.decrementVelocidad();
                 break;
-               
+           case KeyEvent.VK_UP:
+               vaARotar();     
+               break; 
 
     }
          }
+}
+
+void vaARotar(){
+    this.vaARotar = true;
+}
+
+void rotar(){
+    
+   figuraActual.rotar();
+   
+    
 }
 
 
@@ -290,12 +345,15 @@ class TAdapter extends KeyAdapter {
         jFrame1 = new javax.swing.JFrame();
         jFrame2 = new javax.swing.JFrame();
         panelTablero = new javax.swing.JPanel();
-        btnLEFT = new javax.swing.JButton();
-        brtRIGHT = new javax.swing.JButton();
-        btnVelocidad = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         panelFigura1 = new javax.swing.JPanel();
         panelFigura2 = new javax.swing.JPanel();
+        label1 = new java.awt.Label();
+        labelScore = new java.awt.Label();
+        label2 = new java.awt.Label();
+        labelLevel = new java.awt.Label();
+        label3 = new java.awt.Label();
+        labelLineas = new java.awt.Label();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -320,7 +378,7 @@ class TAdapter extends KeyAdapter {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(139, 238, 141));
+        setBackground(new java.awt.Color(0, 0, 0));
 
         panelTablero.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -338,27 +396,6 @@ class TAdapter extends KeyAdapter {
             panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 600, Short.MAX_VALUE)
         );
-
-        btnLEFT.setText("<< LEFT");
-        btnLEFT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLEFTActionPerformed(evt);
-            }
-        });
-
-        brtRIGHT.setText("RIGHT >>");
-        brtRIGHT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                brtRIGHTActionPerformed(evt);
-            }
-        });
-
-        btnVelocidad.setText("+");
-        btnVelocidad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVelocidadActionPerformed(evt);
-            }
-        });
 
         jButton2.setText("Pause");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -393,6 +430,15 @@ class TAdapter extends KeyAdapter {
             .addGap(0, 125, Short.MAX_VALUE)
         );
 
+        label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label1.setText("SCORE:");
+
+        label2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label2.setText("LEVEL:");
+
+        label3.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label3.setText("LINEAS:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -402,19 +448,6 @@ class TAdapter extends KeyAdapter {
                 .addComponent(panelTablero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnLEFT, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(28, 28, 28)
-                                .addComponent(btnVelocidad, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29)
-                                .addComponent(brtRIGHT, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41))))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -422,23 +455,47 @@ class TAdapter extends KeyAdapter {
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(panelFigura1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addContainerGap(26, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelLevel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelLineas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(jButton2)
-                .addGap(98, 98, 98)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(labelScore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelLineas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(panelFigura1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelFigura2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(brtRIGHT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLEFT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVelocidad, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelTablero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -447,21 +504,6 @@ class TAdapter extends KeyAdapter {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnLEFTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLEFTActionPerformed
-        // TODO add your handling code here:
-        decrementIndex_x();
-    }//GEN-LAST:event_btnLEFTActionPerformed
-
-    private void brtRIGHTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_brtRIGHTActionPerformed
-        // TODO add your handling code here:
-        incrementIndex_x();
-    }//GEN-LAST:event_brtRIGHTActionPerformed
-
-    private void btnVelocidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVelocidadActionPerformed
-        // TODO add your handling code here:
-        threadFigura.decrementVelocidad();
-    }//GEN-LAST:event_btnVelocidadActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         threadFigura.pause();
@@ -509,12 +551,15 @@ class TAdapter extends KeyAdapter {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton brtRIGHT;
-    private javax.swing.JButton btnLEFT;
-    private javax.swing.JButton btnVelocidad;
     private javax.swing.JButton jButton2;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JFrame jFrame2;
+    private java.awt.Label label1;
+    private java.awt.Label label2;
+    private java.awt.Label label3;
+    private java.awt.Label labelLevel;
+    private java.awt.Label labelLineas;
+    private java.awt.Label labelScore;
     private javax.swing.JPanel panelFigura1;
     private javax.swing.JPanel panelFigura2;
     private javax.swing.JPanel panelTablero;
