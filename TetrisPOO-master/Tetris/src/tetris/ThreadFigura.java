@@ -43,7 +43,7 @@ public class ThreadFigura extends Thread {
     public void run() {
     while(running){
         tablero.nextPieza();
-        setPiezas();       
+        setPiezas();  
         for (int i = tablero.getIndex_y(); i <= tablero.FILAS_Y; i++) {
            int columnaActual = tablero.getIndex_x();
                 mostrarPieza(columnaActual,i);
