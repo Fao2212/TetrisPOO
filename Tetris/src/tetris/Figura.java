@@ -50,6 +50,7 @@ public abstract class Figura {
         setMinY();
         setMaxX();
         setMaxY();
+        System.out.println(maxY);
     }
     void aumentarPos(){
         if( pos<3)
@@ -81,24 +82,25 @@ public abstract class Figura {
     }
     
     void setMaxY(){
-        int mayor = coordenadas[0][1];
+        int mayor = valor[0][1];
         for(int i = 1;i<4;i++){
-            mayor = Math.max(mayor, coordenadas[i][1]);
+            mayor = Math.max(mayor, valor[i][1]);
+            System.out.println(mayor);
     }
         this.maxY = mayor;
     }
     void setMaxX(){
-        int mayor = coordenadas[0][0];
+        int mayor = valor[0][0];
         for(int i = 1;i<4;i++){
-            mayor = Math.max(mayor, coordenadas[i][0]);
+            mayor = Math.max(mayor, valor[i][0]);
     }
         //System.out.println(mayor);
         this.maxX = mayor;
     }
     void setMinY(){
-        int menor = coordenadas[0][0];
+        int menor = valor[0][0];
         for(int i = 1;i<4;i++){
-            menor = Math.min(menor, coordenadas[i][0]);
+            menor = Math.min(menor, valor[i][0]);
     }
         //System.out.println(menor);
         this.minX = menor;
@@ -149,7 +151,8 @@ class FiguraL extends Figura{
              };
         for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
         reSize();
@@ -180,7 +183,8 @@ class FiguraT extends Figura{
              };
                 for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
                 reSize();
@@ -222,7 +226,8 @@ class FiguraT extends Figura{
              };
       for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
       reSize();
@@ -265,7 +270,8 @@ class FiguraT extends Figura{
              };
        for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
        reSize();
@@ -306,7 +312,8 @@ class FiguraT extends Figura{
              };
          for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
          reSize();
@@ -347,7 +354,8 @@ class FiguraT extends Figura{
              };
        for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
        reSize();
@@ -388,7 +396,8 @@ class FiguraT extends Figura{
              };
         for(int i = 0;i<4;i++){
             for(int j = 0;j<2;j++){
-                    coordenadas[i][j] = rotaciones[pos][i][j];
+                    //coordenadas[i][j] = rotaciones[pos][i][j];
+                    valor[i][j] = rotaciones[pos][i][j];
     }
         }
         reSize();
